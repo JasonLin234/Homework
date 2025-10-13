@@ -21,7 +21,7 @@ void printPowerSet(char *set, int set_size)
             }
         }
         if (!hasElements) {
-            cout << "{}";  // ¿é¥XªÅ¶°
+            cout << "{}";  // è¼¸å‡ºç©ºé›†
         }
         cout << std::endl;
     }
@@ -30,11 +30,11 @@ void printPowerSet(char *set, int set_size)
 int main()
 {
     string input;
-        cout << "½Ð¿é¤J¶°¦X¤¸¯À (¨Ò¦p abc, µLªÅ®æ) ©Î¿é¤J stop °±¤î: ";
+        cout << "è«‹è¼¸å…¥é›†åˆå…ƒç´  (ä¾‹å¦‚ abc, ç„¡ç©ºæ ¼): ";
         cin >> input;
         int set_size = input.length();
         if (set_size == 0) {
-            cout << "{}" << std::endl;  // ªÅ¿é¤Jµø¬°ªÅ¶°
+            cout << "{}" << std::endl;  // ç©ºè¼¸å…¥è¦–ç‚ºç©ºé›†
         }
         char *set = new char[set_size + 1];
         strcpy(set, input.c_str());
@@ -42,3 +42,4 @@ int main()
         delete[] set;
     return 0;
 }
+

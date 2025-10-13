@@ -146,16 +146,17 @@ int main() {
 
 ### 編譯與執行指令
 
+#### 遞迴解阿克曼
 ```shell
-$ g++ Akmer.cpp --std=c++17 -o Akmer.exe
+$ g++ Akmer.cpp -std=c++17 -o Akmer.exe
 $ .\Akmer.exe
 請輸入m: 2
 請輸入n: 2
 A(m,n)=7
 ```
-
+#### 非遞迴解阿克曼
 ```shell
-$ g++ NonRecursiveAkmer.cpp --std=c++17 -o  NonRecursiveAkmer.exe
+$ g++ NonRecursiveAkmer.cpp -std=c++17 -o  NonRecursiveAkmer.exe
 $ .\NonRecursiveAkmer.exe
 請輸入m: 2
 請輸入n: 2

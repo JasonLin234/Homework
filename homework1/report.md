@@ -9,37 +9,46 @@
 
 ### 解題策略
 
-1. 使用遞迴函式將問題拆解為更小的子問題：
-   $$\Sigma(n) = n + \Sigma(n-1)$$
-2. 當 $n \leq 1$ 時，返回 $n$ 作為遞迴的結束條件。  
-3. 主程式呼叫遞迴函式，並輸出計算結果。
+1. 使用遞迴函式實現阿克曼函數的數學定義：
+   
+   (1)若 $m = 0$，則返回 $n + 1$。
+   
+   (2)若 $m > 0$ 且 $n = 0$，則遞迴調用 $A(m-1, 1)$。
+   
+   (3)$m > 0$ 且 $n > 0$，則遞迴調用 $A(m-1, A(m, n-1))$。
+2. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。  
+3. 考慮阿克曼函數的快速增長特性，注意輸入值範圍以避免堆疊溢出。
 
 ## 程式實作
 
 以下為主要程式碼：
 
 ```cpp
-#include <iostream>
+#include<iostream>
 using namespace std;
-
-int sigma(int n) {
-    if (n < 0)
-        throw "n < 0";
-    else if (n <= 1)
-        return n;
-    return n + sigma(n - 1);
+int ackerman(int m,int n){
+	if(m==0)
+		return n+1;
+	else if(m>0&&n==0)
+		return ackerman(m-1,1);
+	else
+		return ackerman(m-1,ackerman(m,n-1));
 }
-
-int main() {
-    int result = sigma(3);
-    cout << result << '\n';
-}
+int main(){
+	int m,n=0;
+	cout<<"請輸入m:"; 
+	cin>>m;
+	cout<<"請輸入n:"; 
+	cin>>n;
+	
+	cout<<"A(m,n)="<<ackerman(m,n)<<endl;
+} 
 ```
 
 ## 效能分析
 
-1. 時間複雜度：程式的時間複雜度為 $O(\log n)$。
-2. 空間複雜度：空間複雜度為 $O(100\times \log n + \pi)$。
+1. 時間複雜度：阿克曼函數的遞迴深度和計算量會隨 $m$ 和 $n$ 快速增長，近似為原始遞迴函數 $A(m, n)$。
+2. 空間複雜度：空間複雜度取決於堆疊深度，為 $O(A(m, n))$，在較大的 $m$ 和 $n$ 下可能導致堆疊溢出。
 
 ## 測試與驗證
 

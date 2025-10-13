@@ -147,16 +147,16 @@ int main() {
 ### 編譯與執行指令
 
 ```shell
-$ g++ -std=c++17 -o Akmer Akmer.cpp
-$ ./Akmer
+$ g++ Akmer.cpp --std=c++17 -o Akmer.exe
+$ .\Akmer.exe
 請輸入m: 2
 請輸入n: 2
 A(m,n)=7
 ```
 
 ```shell
-$ g++ -std=c++17 -o NonRecursiveAkmer NonRecursiveAkmer.cpp
-$ ./NonRecursiveAkmer
+$ g++ NonRecursiveAkmer.cpp --std=c++17 -o  NonRecursiveAkmer.exe
+$ .\NonRecursiveAkmer.exe
 請輸入m: 2
 請輸入n: 2
 A(m,n)=7
@@ -164,9 +164,9 @@ A(m,n)=7
 
 ### 結論
 
-1. 程式能正確計算阿克曼函數的值，符合數學定義。  
+1. 遞迴版與非遞迴版程式均能正確計算阿克曼函數的值，符合數學定義。  
 2. 測試案例涵蓋了多種邊界情況（$m = 0$、$n = 0$、$m, n > 0$），驗證程式的正確性。  
-3. 由於遞迴深度過高，當 $m \geq 4$ 時可能因堆疊溢出而失敗，需考慮非遞迴實現。
+3. 非遞迴阿克曼設有堆疊大小限制（MaxSize = 10000），需根據需求調整。
 
 ## 申論及開發報告
 

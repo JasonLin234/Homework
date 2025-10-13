@@ -4,10 +4,10 @@
 
 ## 解題說明
 
-1. 分別使用遞迴函式與非遞迴演算法完成阿克曼函式。
+1. 分別使用遞迴函式與非遞迴版本完成阿克曼函式。
 2. 如果S是一個包含n個元素的集合，則S的幂集是S所有可能子集的集合，寫一個遞迴函式來計算powerset(S)。
 
-### 解題策略
+### 遞迴解阿克曼解題策略
 
 1. 使用遞迴函式實現阿克曼函數的數學定義：
    
@@ -16,11 +16,18 @@
    (2)若 $m > 0$ 且 $n = 0$，則遞迴調用 $A(m-1, 1)$。
    
    (3)$m > 0$ 且 $n > 0$，則遞迴調用 $A(m-1, A(m, n-1))$。
-2. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。  
+2. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。
+
+### 非遞迴解阿克曼解題策略
+
+1. 使用堆疊模擬阿克曼函數的遞迴過程，避免堆疊溢出問題。
+2. 定義結構體儲存每次遞迴的狀態（$m$、$n$、標記和結果）。
+3. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。
+4. 加入堆疊溢出檢查，確保程式穩健性。
 
 ## 程式實作
 
-以下為主要程式碼：
+### 遞迴解阿克曼程式碼
 
 ```cpp
 #include<iostream>
@@ -41,7 +48,78 @@ int main(){
 	cin>>n;
 	
 	cout<<"A(m,n)="<<ackerman(m,n)<<endl;
-} 
+}
+```
+### 非遞迴解阿克曼程式碼
+
+```cpp
+#include <iostream>
+#include <string>
+#include <algorithm>
+#define MaxSize 10000
+using namespace std;
+
+typedef struct {
+    int m, n;
+    int flag;
+    int sum;
+} AkmStack;
+
+int Akm(int m, int n) {
+    AkmStack st[MaxSize];
+    int top = -1;
+    top++;
+    if (top >= MaxSize) {
+        cout << "堆疊溢位" << endl;
+        return -1;
+    }
+    st[top].m = m;
+    st[top].n = n;
+    st[top].flag = 0;
+    st[top].sum = 0;
+    while (top > -1) {
+        if (st[top].flag == 2) {
+            if (top == 0) {
+                break;
+            }
+            int result = st[top].sum;
+            top--;
+            st[top].m--;
+            st[top].n = result;
+            st[top].flag = 0;
+        } else {
+            if (st[top].m == 0) {
+                st[top].sum = st[top].n + 1;
+                st[top].flag = 2;
+            } else if (st[top].n == 0) {
+                st[top].m--;
+                st[top].n = 1;
+                st[top].flag = 0;
+            } else {
+                top++;
+                if (top >= MaxSize) {
+                    cout << "堆疊溢位" << endl;
+                    return -1;
+                }
+                st[top].m = st[top-1].m;
+                st[top].n = st[top-1].n - 1;
+                st[top].flag = 0;
+                st[top].sum = 0;
+            }
+        }
+    }
+    return st[0].sum;
+}
+
+int main() {
+    int m, n;
+    cout << "請輸入m: ";
+    cin >> m;
+    cout << "請輸入n: ";
+    cin >> n;
+    cout << "A(" << m << "," << n << ") = " << Akm(m, n) << endl;
+    return 0;
+}
 ```
 
 ## 效能分析

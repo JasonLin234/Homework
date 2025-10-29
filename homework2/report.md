@@ -1,11 +1,10 @@
 # 41143122
 
-作業一
+作業二
 
 ## 解題說明
 
-1. 分別使用遞迴函式與非遞迴版本完成阿克曼函式。
-2. 本題要求實現一個程式，計算並輸出給定集合的冪集（Power Set），輸入為一字串表示的集合元素。
+本題要求實作 Polynomial 類別，其抽象資料型別（ADT）包含多項式的動態儲存、輸入輸出、加法、乘法與求值運算，並重載 << 與 >> 運算子以支援多項式的格式化輸入與輸出。
 
 ### 遞迴解阿克曼解題策略
 
@@ -18,161 +17,190 @@
    (3)$m > 0$ 且 $n > 0$，則遞迴調用 $A(m-1, A(m, n-1))$。
 2. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。
 
-### 非遞迴解阿克曼解題策略
-
-1. 使用堆疊模擬阿克曼函數的遞迴過程，避免堆疊溢出問題。
-2. 定義結構體儲存每次遞迴的狀態（ $m$ 、 $n$ 、標記和結果）。
-3. 主程式接收用戶輸入的 $m$ 和 $n$，並輸出計算結果。
-4. 加入堆疊溢出檢查，確保程式穩健性。
-
-### 冪集解題策略
-
-1. 使用位元運算生成集合的所有子集，透過計數器遍歷 $0$ 到 $2^n-1$，每個計數器的二進位表示對應一個子集。
-2. 主程式接收用戶輸入的字串，轉換為字符陣列，傳遞給冪集計算函數。
-3. 處理空集和無元素的情況，確保輸出格式一致。
-
 ## 程式實作
-
-### 遞迴解阿克曼程式碼
 
 ```cpp
 #include<iostream>
-using namespace std;
-int ackerman(int m,int n){
-	if(m==0)
-		return n+1;
-	else if(m>0&&n==0)
-		return ackerman(m-1,1);
-	else
-		return ackerman(m-1,ackerman(m,n-1));
-}
-int main(){
-	int m,n=0;
-	cout<<"請輸入m:"; 
-	cin>>m;
-	cout<<"請輸入n:"; 
-	cin>>n;
-	
-	cout<<"A(m,n)="<<ackerman(m,n)<<endl;
-}
-```
-### 非遞迴解阿克曼程式碼
-
-```cpp
-#include <iostream>
-#include <string>
 #include <algorithm>
-#define MaxSize 10000
-using namespace std;
-
-typedef struct {
-    int m, n;
-    int flag;
-    int sum;
-} AkmStack;
-
-int Akm(int m, int n) {
-    AkmStack st[MaxSize];
-    int top = -1;
-    top++;
-    if (top >= MaxSize) {
-        cout << "堆疊溢位" << endl;
-        return -1;
-    }
-    st[top].m = m;
-    st[top].n = n;
-    st[top].flag = 0;
-    st[top].sum = 0;
-    while (top > -1) {
-        if (st[top].flag == 2) {
-            if (top == 0) {
-                break;
-            }
-            int result = st[top].sum;
-            top--;
-            st[top].m--;
-            st[top].n = result;
-            st[top].flag = 0;
-        } else {
-            if (st[top].m == 0) {
-                st[top].sum = st[top].n + 1;
-                st[top].flag = 2;
-            } else if (st[top].n == 0) {
-                st[top].m--;
-                st[top].n = 1;
-                st[top].flag = 0;
-            } else {
-                top++;
-                if (top >= MaxSize) {
-                    cout << "堆疊溢位" << endl;
-                    return -1;
-                }
-                st[top].m = st[top-1].m;
-                st[top].n = st[top-1].n - 1;
-                st[top].flag = 0;
-                st[top].sum = 0;
-            }
-        }
-    }
-    return st[0].sum;
-}
-
-int main() {
-    int m, n;
-    cout << "請輸入m: ";
-    cin >> m;
-    cout << "請輸入n: ";
-    cin >> n;
-    cout << "A(" << m << "," << n << ") = " << Akm(m, n) << endl;
-    return 0;
-}
-```
-
-### 冪集程式碼
-
-```cpp
-#include <iostream>
-#include <string>
 #include <cmath>
-#include <cstring>
 using namespace std;
-
-void printPowerSet(char *set, int set_size)
-{
-    unsigned int pow_set_size = (unsigned int)pow(2, set_size);
-    int counter, j;
-
-    for(counter = 0; counter < pow_set_size; counter++)
-    {
-        bool hasElements = false;
-        for(j = 0; j < set_size; j++)
-        {
-            if(counter & (1 << j))
-            {
-                cout << set[j]<<" ";
-                hasElements = true;
-            }
-        }
-        if (!hasElements) {
-            cout << "{}";  // 輸出空集
-        }
-        cout << std::endl;
+class Polynomial;
+class Term{
+	friend Polynomial;
+	friend bool term_greater(const Term&, const Term&);//降幕排列函式 
+	friend ostream& operator<<(ostream &output,const Polynomial &Poly);
+	private:
+		int exp;
+		float coef;
+}; 
+class Polynomial{
+	private:
+		Term *termArray;
+		int capacity;
+		int terms;
+	public:
+		Polynomial():capacity(2),terms(0){
+			termArray = new Term[capacity];
+		}
+		~Polynomial(){
+			delete[] termArray;
+		}
+		Polynomial(const Polynomial& other);
+		Polynomial& operator=(const Polynomial& other);
+		void sortTerms();
+		Polynomial Add(Polynomial b);
+		Polynomial Mult(Polynomial b);
+		float Eval(float x);
+		void newTerm(const float newcoef,const int newexp);
+		
+		friend istream& operator>>(istream &input,Polynomial &Poly);
+		friend ostream& operator<<(ostream &output,const Polynomial &Poly);
+};
+istream& operator>>(istream &is,Polynomial &poly){
+	float coef;
+	int exp, n;
+	is>>n;
+	while(n--){
+		is>>coef>>exp;
+		poly.newTerm(coef,exp);
+	}poly.sortTerms();
+	return is;
+}
+ostream& operator<<(ostream &os,const Polynomial &poly){
+	if (poly.terms == 0) {
+        os << "0";
+        return os;
     }
+    for (int i = 0; i < poly.terms; i++) {
+        float coef = poly.termArray[i].coef;
+        int exp = poly.termArray[i].exp;
+
+        if (i > 0) {
+            if (coef > 0) os << " + ";
+            else { os << " - "; coef = -coef; }
+        } else if (coef < 0) {
+            os << "-";
+            coef = -coef;
+        }
+
+        if (coef == 0) continue;
+
+        if (exp == 0) os << coef;
+        else if (exp == 1) {
+            if (coef != 1) os << coef;
+            os << "x";
+        } else {
+            if (coef != 1) os << coef;
+            os << "x^" << exp;
+        }
+    }
+    return os;
+}
+// 複製建構子
+Polynomial::Polynomial(const Polynomial& other) : capacity(other.capacity), terms(other.terms) {
+    termArray = new Term[capacity];
+    copy(other.termArray, other.termArray + terms, termArray);
 }
 
-int main()
-{
-    string input;
-        cout << "請輸入集合元素 (例如 abc, 無空格): ";
-        cin >> input;
-        int set_size = input.length();
-        if (set_size == 0) {
-            cout << "{}" << std::endl;  // 空輸入視為空集
+// 賦值運算子
+Polynomial& Polynomial::operator=(const Polynomial& other) {
+    if (this == &other) return *this;
+    delete[] termArray;
+    capacity = other.capacity;
+    terms = other.terms;
+    termArray = new Term[capacity];
+    copy(other.termArray, other.termArray + terms, termArray);
+    return *this;
+}
+
+bool term_greater(const Term& a, const Term& b) { return a.exp > b.exp; }
+
+void Polynomial::sortTerms() {
+    std::sort(termArray, termArray + terms, term_greater);
+}
+
+Polynomial Polynomial::Add(Polynomial b) {
+    Polynomial c;
+    Polynomial a = *this;  // 複製避免修改原物件
+    a.sortTerms();
+    b.sortTerms();
+
+    int i = 0, j = 0;
+    while (i < a.terms && j < b.terms) {
+        if (a.termArray[i].exp == b.termArray[j].exp) {
+            float sum = a.termArray[i].coef + b.termArray[j].coef;
+            if (sum != 0) c.newTerm(sum, a.termArray[i].exp);
+            ++i; ++j;
         }
-        char *set = new char[set_size + 1];
-        strcpy(set, input.c_str());
-        printPowerSet(set, set_size);
-        delete[] set;
+        else if (a.termArray[i].exp > b.termArray[j].exp) {
+            c.newTerm(a.termArray[i].coef, a.termArray[i].exp);
+            ++i;
+        }
+        else {
+            c.newTerm(b.termArray[j].coef, b.termArray[j].exp);
+            ++j;
+        }
+    }
+    while (i < a.terms) c.newTerm(a.termArray[i].coef, a.termArray[i].exp), ++i;
+    while (j < b.terms) c.newTerm(b.termArray[j].coef, b.termArray[j].exp), ++j;
+
+    return c;  // 自動深複製
+}
+Polynomial Polynomial::Mult(Polynomial b){
+    Polynomial c;
+    for(int i = 0; i < terms; i++){
+        for(int j = 0; j < b.terms; j++){
+            float newCoef = termArray[i].coef * b.termArray[j].coef;
+            int newExp = termArray[i].exp + b.termArray[j].exp;
+            // 需合併同冪次項
+            bool found = false;
+            for(int k = 0; k < c.terms; k++){
+                if(c.termArray[k].exp == newExp){
+                    c.termArray[k].coef += newCoef;
+                    found = true;
+                    break;
+                }
+            }
+            if(!found && newCoef != 0){
+                c.newTerm(newCoef, newExp);
+            }
+        }
+    }
+    c.sortTerms();
+    return c;
+}
+float Polynomial::Eval(float x){
+    float result = 0;
+    for(int i = 0; i < terms; i++){
+        result += termArray[i].coef * pow(x, termArray[i].exp);
+    }
+    return result;
+}
+void Polynomial::newTerm(const float theCoef,const int theExp) {
+	if(theCoef==0)
+		return;
+	if(terms==capacity){
+		capacity*=2;
+		Term *temp=new Term[capacity];
+		copy(termArray,termArray+terms,temp);
+		delete []termArray;
+		termArray=temp;
+	}
+	termArray[terms].coef=theCoef;
+	termArray[terms++].exp=theExp;
+}
+int main() {
+    Polynomial p1, p2;
+    cout << "輸入第一個多項式 (項數 係數 指數): ";
+    cin >> p1;
+    cout << "輸入第二個多項式: ";
+    cin >> p2;
+
+    cout << "p1 = " << p1 << endl;
+    cout << "p2 = " << p2 << endl;
+    cout << "加法: " << p1.Add(p2) << endl;
+    cout << "乘法: " << p1.Mult(p2) << endl;
+    cout << "p1(2) = " << p1.Eval(2) << endl;
     return 0;
 }
 ```
@@ -181,12 +209,6 @@ int main()
 ### 遞迴解阿克曼
 1. 時間複雜度：阿克曼函數的遞迴深度和計算量會隨 $m$ 和 $n$ 快速增長，時間複雜度近似為原始遞迴函數 $O(A(m, n))$。
 2. 空間複雜度：空間複雜度取決於堆疊深度，為 $O(A(m, n))$，在較大的 $m$ 和 $n$ 下可能導致堆疊溢出。
-### 非遞迴解阿克曼
-1. 時間複雜度：阿克曼函數的遞迴深度和計算量會隨 $m$ 和 $n$ 快速增長，時間複雜度近似為原始遞迴函數 $O(A(m, n))$。
-2. 空間複雜度：因使用固定大小的堆疊陣列，空間複雜度為 $O(\text{MaxSize})$，其中 MaxSize = 10000，所以空間複雜度為 $O(10000)$
-### 冪集
-1. 時間複雜度：生成冪集需要遍歷 $2^n$ 個子集，每個子集檢查 $n$ 個元素，總時間複雜度為 $O(n \cdot 2^n)$。
-2. 空間複雜度：使用動態分配的字符陣列儲存輸入集合，空間複雜度為 $O(n)$，其中 $n$ 為集合大小。
 
 ## 測試與驗證
 
@@ -200,15 +222,6 @@ int main()
 | 測試四   | $(3, 1)$      | 13       | 13       |
 | 測試五   | $(4, 0)$     | 13       | 13       |
 
-### 冪集測試案例
-
-| 測試案例 | 輸入參數| 預期輸出 | 實際輸出 |
-|----------|--------------|----------|----------|
-| 測試一   | ""           | {}       | {}       |
-| 測試二   | "a"          | {}, a     | {}, a      |
-| 測試三   | "ab"        | {}, a, b, ab | {}, a, b, ab|
-| 測試四   | "abc"      | {}, a, b, ab, c, ac, bc, abc | {}, a, b, ab, c, ac, bc, abc       |
-
 ### 編譯與執行指令
 
 #### 遞迴解阿克曼
@@ -218,28 +231,6 @@ $ .\Akmer.exe
 請輸入m: 2
 請輸入n: 2
 A(m,n)=7
-```
-#### 非遞迴解阿克曼
-```shell
-$ g++ NonRecursiveAkmer.cpp -std=c++17 -o  NonRecursiveAkmer.exe
-$ .\NonRecursiveAkmer.exe
-請輸入m: 2
-請輸入n: 2
-A(m,n)=7
-```
-#### 冪集
-```shell
-$ g++ powerset.cpp -std=c++17 -o  powerset.exe
-$ .\powerset.exe
-請輸入集合元素 (例如 abc, 無空格): abc
-{}
-a
-b
-a b
-c
-a c
-b c
-a b c
 ```
 
 ### 結論

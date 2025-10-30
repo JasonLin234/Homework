@@ -29,20 +29,20 @@ class Term{
 ### 解題策略
 
 #### 資料結構設計：
-1. Polynomial 類別以動態陣列 termArray 儲存多項式項，支援自動擴容。
-2. term_greater()：實現 降冪排列（由大到小）。
+1. `Polynomial` 類別以動態陣列 `termArray` 儲存多項式項，支援自動擴容。
+2. `term_greater()`：實現 降冪排列（由大到小）。
    
 #### 核心功能：
 
-1. operator>>：輸入項數 n，接著 n 組 (coef, exp)
-2. operator<<：輸出標準多項式字串格式（處理正負號、係數為 1/-1、常數項、x 項等）
-3. Add()：合併同冪次項，係數為 0 則不加入
-4. Mult()：每項相乘後合併同冪次項
-5. Eval(x)：計算多項式在 x 點的值
+1. `operator>>`：輸入項數 n，接著 n 組 (coef, exp)
+2. `operator<<`：輸出標準多項式字串格式（處理正負號、係數為 1/-1、常數項、x 項等）
+3. `Add()`：合併同冪次項，係數為 0 則不加入
+4. `Mult()`：每項相乘後合併同冪次項
+5. `Eval(x)`：計算多項式在 x 點的值
 
 #### 記憶體管理：
 1. 實作複製建構子與賦值運算子（深複製）
-2. newTerm() 自動擴容（容量倍增）
+2. `newTerm()` 自動擴容（容量倍增）
 
 ## 程式實作
 
@@ -241,7 +241,7 @@ int main() {
 | `operator>>` | $O(n \log n)$ | 讀入 $n$ 項 + `sortTerms()` 排序 |
 | `operator<<` | $O(n)$ | 逐項輸出，線性掃描 |
 | `newTerm()` | $O(1)$ 均攤 | 動態陣列倍增策略 |
-| `sortTerms()` | $O(n \log n)$ | 使用 `std::sort` |
+| `sortTerms()` | $O(n \log n)$ | 使用 `sort` |
 | `Add(Polynomial)` | $O(n + m)$ | 類似合併排序的雙指標演算法 |
 | `Mult(Polynomial)` | $O(nm \cdot k)$| 兩兩相乘 + 線性搜尋合併同類項（ $k$ 為結果項數） |
 | `Eval(float)` | $O(n)$ | 逐項計算 $\text{coef} \cdot x^{\text{exp}}$ |
@@ -307,6 +307,14 @@ p1(2) = 13
 1. **彈性擴展** ：支援任意項數，無需預先知道大小
 2. **簡單實作** ：容易實現記憶體管理
 3. **倍增策略** ：均攤 $O(1)$ 新增，效率高
+
+### `istream` 與 `ostream` 重載設計的優勢與反思
+
+#### 優勢：
+1. 語法自然：`cin >> p1; cout << p1;` 符合直覺，無需額外 `read()` / `print()` 函式
+2. 封裝性佳：輸入輸出邏輯內聚於類別，外部無需知道內部結構
+3. 可擴展：支援 `ifstream`, `stringstream`，未來可輕鬆序列化
+
 
 ### 結論
 本程式成功實作 **Polynomial ADT**，完整支援：
